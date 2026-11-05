@@ -1,5 +1,5 @@
 // Defensa CSRF adicional a SameSite=Lax: las peticiones que modifican datos y traen cabecera Origin
-// deben venir del mismo host. (Peticiones sin Origin, como curl o tests, no son ataques de navegador.)
+// deben venir del mismo host (también se acepta el host reenviado por el proxy de Render).
 const AppError = require('../utils/AppError');
 
 module.exports = function sameOrigin(req, res, next) {
@@ -7,7 +7,12 @@ module.exports = function sameOrigin(req, res, next) {
   const origin = req.get('origin');
   if (!origin) return next();
   try {
-    if (new URL(origin).host === req.get('host')) return next();
+    const originHost = new URL(origin).host;
+    const hosts = [req.get('host'), req.get('x-forwarded-host')]
+      .filter(Boolean)
+      .flatMap((h) => h.split(','))
+      .map((h) => h.trim());
+    if (hosts.includes(originHost)) return next();
   } catch {
     /* origen malformado */
   }
