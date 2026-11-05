@@ -1,0 +1,2 @@
+<h1 class="h3 mb-4">Editar receta</h1>
+<%- include('../partials/receta-form', { action: '/recetas/' + receta._id + '?_method=PUT', submitLabel: 'Guardar cambios', cancelUrl: '/recetas/' + receta._id }) %>

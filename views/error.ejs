@@ -1,0 +1,8 @@
+<div class="text-center py-5">
+  <h1 class="display-4"><%= status %></h1>
+  <p class="lead"><%= message %></p>
+  <a class="btn btn-primary" href="/recetas">Volver al inicio</a>
+  <% if (locals.stack) { %>
+    <pre class="text-start bg-light border rounded p-3 mt-4 small"><%= stack %></pre>
+  <% } %>
+</div>

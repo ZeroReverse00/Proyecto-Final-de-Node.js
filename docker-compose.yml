@@ -1,0 +1,27 @@
+# Uso: crea un .env con JWT_SECRET y ejecuta `docker compose up --build`
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      COOKIE_SECURE: "false"          # en http://localhost; en producción real déjalo en true
+      PORT: 3000
+      DATABASE_URL: mongodb://mongo:27017/recetario
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET en tu archivo .env (mín. 32 caracteres)}
+    depends_on:
+      - mongo
+    volumes:
+      - uploads:/app/public/uploads
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  uploads:

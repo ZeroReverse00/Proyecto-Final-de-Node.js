@@ -1,0 +1,18 @@
+# Blueprint opcional de Render (New + > Blueprint)
+services:
+  - type: web
+    name: recetario
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false          # pégala en el panel (cadena de MongoDB Atlas)
+      - key: JWT_SECRET
+        generateValue: true  # Render genera un secreto aleatorio

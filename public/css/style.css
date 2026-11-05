@@ -1,0 +1,5 @@
+.receta-img { height: 180px; object-fit: cover; width: 100%; }
+.receta-img-vacia { background: #f1f3f5; font-size: 3rem; }
+.receta-detalle { max-height: 420px; width: 100%; object-fit: cover; }
+.receta-thumb { max-height: 140px; }
+.texto-preformateado { white-space: pre-wrap; }

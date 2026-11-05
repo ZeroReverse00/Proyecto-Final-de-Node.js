@@ -1,0 +1,32 @@
+<article class="row">
+  <div class="col-lg-8 mx-auto">
+    <% if (receta.imagen) { %>
+      <img src="/uploads/<%= receta.imagen %>" class="img-fluid rounded mb-3 receta-detalle" alt="<%= receta.titulo %>">
+    <% } %>
+    <span class="badge text-bg-secondary"><%= receta.categoria %></span>
+    <h1 class="h2 mt-2"><%= receta.titulo %></h1>
+    <p class="text-muted">
+      ⏱ <%= receta.tiempoPreparacion %> min · por <%= receta.autor ? receta.autor.nombre : 'Anónimo' %> ·
+      <%= receta.createdAt.toLocaleDateString('es-ES') %>
+    </p>
+    <% if (receta.descripcion) { %><p class="lead"><%= receta.descripcion %></p><% } %>
+
+    <h2 class="h5 mt-4">Ingredientes</h2>
+    <ul>
+      <% receta.ingredientes.forEach(function (i) { %><li><%= i %></li><% }); %>
+    </ul>
+
+    <h2 class="h5 mt-4">Instrucciones</h2>
+    <p class="texto-preformateado"><%= receta.instrucciones %></p>
+
+    <div class="d-flex gap-2 mt-4">
+      <a class="btn btn-outline-secondary" href="/recetas">← Volver</a>
+      <% if (puedeEditar) { %><a class="btn btn-outline-primary" href="/recetas/<%= receta._id %>/editar">Editar</a><% } %>
+      <% if (puedeEliminar) { %>
+        <form method="POST" action="/recetas/<%= receta._id %>?_method=DELETE" data-confirm="¿Eliminar esta receta? No se puede deshacer.">
+          <button class="btn btn-outline-danger" type="submit">Eliminar</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</article>

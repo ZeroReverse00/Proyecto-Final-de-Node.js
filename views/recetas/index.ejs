@@ -1,0 +1,76 @@
+<%
+  const url = (p) => {
+    const params = new URLSearchParams();
+    if (filtros.q) params.set('q', filtros.q);
+    if (filtros.categoria) params.set('categoria', filtros.categoria);
+    if (filtros.mias) params.set('mias', '1');
+    params.set('limit', limit);
+    params.set('page', p);
+    return '/recetas?' + params.toString();
+  };
+  const desde = Math.max(1, page - 2), hasta = Math.min(pages, page + 2);
+%>
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <h1 class="h3 mb-0">Recetas <small class="text-muted fs-6">(<%= total %>)</small></h1>
+  <% if (locals.currentUser) { %><a class="btn btn-primary" href="/recetas/nueva">+ Nueva receta</a><% } %>
+</div>
+
+<form class="row g-2 mb-4" method="GET" action="/recetas">
+  <div class="col-md-4"><input type="search" name="q" class="form-control" placeholder="Buscar por título" value="<%= filtros.q %>"></div>
+  <div class="col-md-3">
+    <select name="categoria" class="form-select" aria-label="Categoría">
+      <option value="">Todas las categorías</option>
+      <% categorias.forEach(function (c) { %><option value="<%= c %>" <%= filtros.categoria === c ? 'selected' : '' %>><%= c %></option><% }); %>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select name="limit" class="form-select" aria-label="Por página">
+      <% [6, 9, 12, 24].forEach(function (n) { %><option value="<%= n %>" <%= limit === n ? 'selected' : '' %>><%= n %> por página</option><% }); %>
+    </select>
+  </div>
+  <% if (locals.currentUser) { %>
+    <div class="col-md-2 d-flex align-items-center">
+      <div class="form-check"><input class="form-check-input" type="checkbox" name="mias" value="1" id="mias" <%= filtros.mias ? 'checked' : '' %>><label class="form-check-label" for="mias">Solo mías</label></div>
+    </div>
+  <% } %>
+  <div class="col-md-1 d-grid"><button class="btn btn-outline-primary" type="submit">Filtrar</button></div>
+</form>
+
+<% if (!items.length) { %>
+  <div class="alert alert-info">No se encontraron recetas.</div>
+<% } else { %>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <% items.forEach(function (r) { %>
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <% if (r.imagen) { %>
+            <img src="/uploads/<%= r.imagen %>" class="card-img-top receta-img" alt="<%= r.titulo %>">
+          <% } else { %>
+            <div class="receta-img receta-img-vacia d-flex align-items-center justify-content-center">🍽️</div>
+          <% } %>
+          <div class="card-body">
+            <span class="badge text-bg-secondary mb-2"><%= r.categoria %></span>
+            <h2 class="h5 card-title"><a class="stretched-link text-decoration-none" href="/recetas/<%= r._id %>"><%= r.titulo %></a></h2>
+            <p class="card-text text-muted small"><%= r.descripcion %></p>
+          </div>
+          <div class="card-footer small text-muted d-flex justify-content-between">
+            <span>⏱ <%= r.tiempoPreparacion %> min</span>
+            <span>por <%= r.autor ? r.autor.nombre : 'Anónimo' %></span>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<% if (pages > 1) { %>
+  <nav class="mt-4" aria-label="Paginación">
+    <ul class="pagination justify-content-center flex-wrap">
+      <li class="page-item <%= page <= 1 ? 'disabled' : '' %>"><a class="page-link" href="<%= url(page - 1) %>">&laquo;</a></li>
+      <% for (let p = desde; p <= hasta; p++) { %>
+        <li class="page-item <%= p === page ? 'active' : '' %>"><a class="page-link" href="<%= url(p) %>"><%= p %></a></li>
+      <% } %>
+      <li class="page-item <%= page >= pages ? 'disabled' : '' %>"><a class="page-link" href="<%= url(page + 1) %>">&raquo;</a></li>
+    </ul>
+  </nav>
+<% } %>

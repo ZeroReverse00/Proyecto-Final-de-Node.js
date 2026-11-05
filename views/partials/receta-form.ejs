@@ -1,0 +1,52 @@
+<%
+  // Si la validación falló se muestran los valores enviados (old); si no, los de la receta (edición)
+  const src = locals.old || locals.receta || {};
+  const val = (k) => {
+    const v = src[k];
+    if (Array.isArray(v)) return v.join('\n');
+    if (typeof v === 'number' && Number.isNaN(v)) return '';
+    return v ?? '';
+  };
+  const actual = locals.receta || {};
+%>
+<form method="POST" action="<%= action %>" enctype="multipart/form-data" novalidate>
+  <div class="mb-3">
+    <label class="form-label" for="titulo">Título *</label>
+    <input class="form-control" id="titulo" name="titulo" maxlength="120" required value="<%= val('titulo') %>">
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="descripcion">Descripción</label>
+    <textarea class="form-control" id="descripcion" name="descripcion" rows="2" maxlength="500"><%= val('descripcion') %></textarea>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="categoria">Categoría *</label>
+      <select class="form-select" id="categoria" name="categoria" required>
+        <% categorias.forEach(function (c) { %>
+          <option value="<%= c %>" <%= val('categoria') === c ? 'selected' : '' %>><%= c %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="tiempoPreparacion">Tiempo de preparación (min) *</label>
+      <input class="form-control" type="number" min="1" max="1440" id="tiempoPreparacion" name="tiempoPreparacion" required value="<%= val('tiempoPreparacion') %>">
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="ingredientes">Ingredientes * <small class="text-muted">(uno por línea)</small></label>
+    <textarea class="form-control" id="ingredientes" name="ingredientes" rows="5" required><%= val('ingredientes') %></textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="instrucciones">Instrucciones *</label>
+    <textarea class="form-control" id="instrucciones" name="instrucciones" rows="7" required><%= val('instrucciones') %></textarea>
+  </div>
+  <div class="mb-4">
+    <label class="form-label" for="imagen">Imagen <small class="text-muted">(JPG, PNG o WEBP, máx. 2 MB)</small></label>
+    <% if (actual.imagen) { %>
+      <div class="mb-2"><img src="/uploads/<%= actual.imagen %>" alt="Imagen actual" class="img-thumbnail receta-thumb"></div>
+    <% } %>
+    <input class="form-control" type="file" id="imagen" name="imagen" accept="image/jpeg,image/png,image/webp">
+  </div>
+  <button class="btn btn-primary" type="submit"><%= submitLabel %></button>
+  <a class="btn btn-outline-secondary" href="<%= cancelUrl %>">Cancelar</a>
+</form>
