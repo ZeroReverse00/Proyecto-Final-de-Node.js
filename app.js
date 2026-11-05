@@ -40,6 +40,7 @@ app.use(
       },
     },
     hsts: config.https,
+    referrerPolicy: { policy: 'same-origin' },
   })
 );
 if (config.corsOrigins.length) app.use(cors({ origin: config.corsOrigins, credentials: true }));
